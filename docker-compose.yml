@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  test-app: # 서비스 이름 (컨테이너 이름 아님)
+    build: .
+    container_name: test-container # 컨테이너 이름
+    ports:
+      - "5000:5000" # EC2에 외부포트 5000으로 들어오면, Docker 컨테이너 안의 5000 포트로 전달
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx-container
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - test-app # 서비스 이름 (위에서 지은거)
