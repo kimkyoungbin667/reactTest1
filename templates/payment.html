@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>토스 결제 테스트</title>
+</head>
+<body>
+    <h2>상품 결제</h2>
+    <!-- 결제 버튼 -->
+    <button onclick="requestPayment()">누르지마세요</button>
+
+    <!-- 토스 결제 JS SDK -->
+    <script src="https://js.tosspayments.com/v1/payment"></script>
+    <script>
+        function requestPayment() {
+            // Flask 서버에 POST 요청을 보내 결제 정보 요청
+            fetch("/pay", {
+                method: "POST"
+            })
+            .then(response => response.json())  // JSON 응답 받기
+            .then(data => {
+                // TossPayments 객체 초기화
+                const tossPayments = TossPayments(data.clientKey);
+
+                // 결제 요청 시작 (카드 결제 방식 선택)
+                tossPayments.requestPayment("카드", {
+                    amount: data.amount,  // 금액
+                    orderId: data.orderId,  // 고유 주문 ID
+                    orderName: data.orderName,  // 상품 이름
+                    successUrl: data.successUrl,  // 성공 시 리다이렉트
+                    failUrl: data.failUrl,  // 실패 시 리다이렉트
+                    customerName: "홍길동"  // 사용자 이름 (테스트용)
+                });
+            });
+        }
+    </script>
+</body>
+</html>
